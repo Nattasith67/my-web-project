@@ -1,0 +1,180 @@
+:root {
+    --sidebar-color: #0059ff;
+    --sidebar-hover: #6ca6df;
+    --sidebar-active: #00a2ff;
+    --text-color: #ecf0f1;
+    --text-muted: #bdc3c7;
+}
+
+.sidebar {
+    position: fixed; /* คงที่ */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: var(--sidebar-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 100; /* ลด z-index */
+    transition: transform 0.3s ease;
+}
+
+.sidebar header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--sidebar-hover);
+}
+
+.sidebar .image-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar .image-text .image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--sidebar-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .image-text .image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar .header-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .header-text .name {
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.sidebar .header-text .role {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.sidebar .sidebar-nav {
+    flex: 1;
+}
+
+.sidebar .sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* เปลี่ยนเป็นแนวตั้ง */
+    flex-direction: column; /* แนวตั้ง */
+}
+
+.sidebar .sidebar-nav ul li {
+    margin-bottom: 8px; /* เพิ่มระยะห่าง */
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%; /* เต็มความกว้าง */
+    box-sizing: border-box;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--sidebar-hover);
+    color: var(--text-color);
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--sidebar-active);
+    color: white;
+}
+
+.sidebar .nav-link .icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0; /* ไม่ให้หด */
+}
+
+.sidebar .nav-link .text {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap; /* ไม่ให้ตัดบรรทัด */
+}
+
+.sidebar .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--sidebar-hover);
+}
+
+.sidebar .logout-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #e74c3c;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sidebar .logout-link:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.sidebar .logout-link .icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar .logout-link .text {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+/* เพิ่ม padding ให้ main content */
+.admin-main-content {
+    margin-left: 250px; /* ระยะห่างจาก sidebar */
+    padding: 20px;
+    min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+    .admin-main-content {
+        margin-left: 0;
+    }
+}
