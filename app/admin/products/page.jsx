@@ -6,23 +6,70 @@ import '../../styles/Product.css'
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
 
-  // ดึงข้อมูลสินค้าจาก API
   useEffect(() => {
-    async function fetchProduct(params) {
-      const res = await fetch("/api/product");
-      const data = await res.json();
-      setProducts(data);
-      setFilteredProducts(data);
-      setLoading(false)
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/product");
+        const data = await res.json();
+        
+        console.log("Products data:", data);
+        
+        if (Array.isArray(data)) {
+          setProducts(data);
+          setFilteredProducts(data);
+        } else {
+          console.error("API returned non-array data:", data);
+          setProducts([]);
+          setFilteredProducts([]);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+        setFilteredProducts([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    fetchProduct();
+    
+    fetchProducts();
   }, []);
-  
-  if (loading) return <div>Loading...</div>;
+
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredProducts(products);
+    } else {
+      const filtered = products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchTerm, products]);
+
+  const handleDelete = async (id) => {
+    if (confirm("คุณต้องการลบสินค้านี้ใช่หรือไม่?")) {
+      try {
+        const res = await fetch(`/api/product/${id}`, {
+          method: "DELETE",
+        });
+        if (res.ok) {
+          setProducts(products.filter((p) => p.id !== id));
+          setFilteredProducts(filteredProducts.filter((p) => p.id !== id));
+          alert("ลบสินค้าสำเร็จ");
+        } else {
+          alert("ลบสินค้าไม่สำเร็จ");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("เกิดข้อผิดพลาดในการลบสินค้า");
+      }
+    }
+  };
+
+  if (loading) return <div>กำลังโหลด...</div>;
 
   return (
     <div className="products-page">
@@ -35,6 +82,7 @@ export default function ProductsPage() {
           เพิ่มสินค้าใหม่
         </Link>
       </div>
+      
       <div className="search-bar">
         <Search size={20} />
         <input
@@ -59,53 +107,37 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((product) => (
-              <tr key={product.id} className="row">
+            {filteredProducts.map((product, index) => (
+              <tr key={`product-${product.id}-${index}`} className="row">
                 <td>
                   <img
                     src={product.image_url || "/images/placeholder.jpg"}
                     alt={product.name}
-                    style={{width: "200px"}}
                     className="product-image"
                   />
                 </td>
                 <td>
                   <div className="product-info">
-                    <h3>{product.name}</h3>
+                    <h3>{product.product_name}</h3>
                     <p>{product.description?.substring(0, 50)}...</p>
                   </div>
                 </td>
-                <td>{product.category || "-"}</td>
+                <td>{product.category_name || "-"}</td>
                 <td className="price">฿{product.price?.toLocaleString()}</td>
+                <td>{product.stock_quantity || 0}</td>
+                <td>มีสินค้า</td>
                 <td>
-                  <span
-                    className={`stock ${product.stock > 5 ? "in-stock" : "low-stock"}`}
+                  <Link href={`/admin/products/${product.id}/edit`} className="btn-edit">
+                    <Edit size={16} />
+                    แก้ไข
+                  </Link>
+                  <button 
+                    onClick={() => handleDelete(product.id)}
+                    className="btn-delete"
                   >
-                    {product.stock || 0}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    className={`status ${product.stock > 0 ? "active" : "inactive"}`}
-                  >
-                    {product.stock > 0 ? "พร้อมขาย" : "หมดสต็อก"}
-                  </span>
-                </td>
-                <td>
-                  <div className="actions">
-                    <Link
-                      href={`/admin/products/${product.id}/edit`}
-                      className="btn-edit"
-                    >
-                      <Edit size={16} />
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="btn-delete"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                    <Trash2 size={16} />
+                    ลบ
+                  </button>
                 </td>
               </tr>
             ))}

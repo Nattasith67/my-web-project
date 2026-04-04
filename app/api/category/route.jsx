@@ -5,7 +5,7 @@ import { pool } from "@/utils/db";
 export async function GET() {
   try {
     const promisePool = pool.promise();
-    const [rows] = await promisePool.query("SELECT * FROM category");
+    const [rows] = await promisePool.query("SELECT category_name FROM categories");
     return NextResponse.json(rows); 
   } catch (e) {
     console.error(e);
@@ -23,7 +23,7 @@ export async function POST(request) {
     const { name} = body;
     
     const [result] = await pool.promise().query(
-      'INSERT INTO category (name) VALUES (?)',
+      'INSERT INTO categories (category_name) VALUES (?)',
       [name]
     );
     

@@ -1,0 +1,90 @@
+:root {
+    --main-color: #0059ff;
+    --odd-color: #8fc9ff;
+}
+
+.category-page {
+    background-color: rgb(247, 247, 247);
+}
+
+.page-header {
+    background-color: var(--main-color);
+    padding: 1rem 0.5rem;
+    border-radius: 1rem;
+    color: white;
+}
+
+.btn-create {
+    background-color: #0059ff;
+    margin: 1rem;
+    color: white;
+    padding: 0.5rem 1rem;
+    width: 18%;
+    border-radius: 0.5rem;
+    text-decoration: none;
+}
+input {
+     width: 60%;
+     padding: 0.5rem;
+     margin: 1.5rem;
+}
+
+
+.category-table {
+    background-color: #ebebeb;
+    border-radius: 1rem;
+    width: 100%;
+    border-collapse: collapse; /* เพิ่มนี้ */
+}
+
+.category-table .row:nth-child(odd) {
+    background-color: var(--odd-color);
+}
+
+/* เพิ่มส่วนนี้สำหรับรูปภาพ */
+.category-table td {
+    padding: 20px; /* เพิ่ม padding ให้รูปมีที่ว่าง */
+    vertical-align: middle;
+}
+
+/* ปุ่มใน table */
+.btn-edit, .btn-delete {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-right: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-edit {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #218838;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.category-table th {
+    background-color: var(--main-color);
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.category-table td {
+    border-bottom: 1px solid #ddd;
+}
