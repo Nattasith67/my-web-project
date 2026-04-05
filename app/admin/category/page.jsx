@@ -16,8 +16,11 @@ export default function CategoryPage() {
       try {
         const res = await fetch("/api/category");
         const data = await res.json();
-        setCategory(data);
-        setFilteredCategory(data);
+        
+        const finalData = Array.isArray(data) ? data : [];
+        
+        setCategory(finalData);
+        setFilteredCategory(finalData);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -35,7 +38,6 @@ export default function CategoryPage() {
       if (!res.ok) throw new Error("ลบไม่สำเร็จ");
       alert("ลบสำเร็จ!");
       
-      // อัปเดต State ลบรายการนั้นออกไปเลย โดยไม่ต้องรีเฟรชหน้าเว็บ (UX ดีกว่า)
       const newCategoryList = category.filter((c) => c.id !== id);
       setCategory(newCategoryList);
     } catch (err) {
@@ -45,8 +47,9 @@ export default function CategoryPage() {
 
   // ระบบค้นหา
   useEffect(() => {
+    if (!Array.isArray(category)) return;
+
     const filtered = category.filter((c) =>
-      // เปลี่ยนจาก c.name เป็น c.category_name ตาม Database
       c.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCategory(filtered);
@@ -85,21 +88,21 @@ export default function CategoryPage() {
             </tr>
           </thead>
           <tbody>
-            {/* ใส่ fallback ให้ key เป็น index ไว้เผื่อกรณี API ไม่ส่ง id มาให้ จะได้ไม่ติด Error */}
-            {filteredCategory.map((c, index) => (
-              <tr key={c.id || index} className="row">
-                {/* เปลี่ยนจาก c.name เป็น c.category_name */}
-                <td>{c.category_name}</td>
+            {/* ผมเปลี่ยนจาก category เป็น item เพื่อไม่ให้ชื่อซ้ำกับ state หลัก จะได้ไม่งงครับ */}
+            {filteredCategory.map((item, index) => (
+              <tr key={`${item.id}-${index}`} className="row">
+                <td>{item.category_name}</td>
                 <td>
                   <div className="actions">
                     <Link
-                      href={`/admin/category/${c.id}/edit`}
+                      href={`/admin/category/${item.id}/edit`}
                       className="btn-edit"
                     >
                       <Edit size={16} />
                     </Link>
                     <button
-                      onClick={() => handleDelete(c.id)}
+                      // ✅ แก้จุดที่ 2: เปลี่ยนจาก c.id เป็น item.id
+                      onClick={() => handleDelete(item.id)}
                       className="btn-delete"
                     >
                       <Trash2 size={16} />

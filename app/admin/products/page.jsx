@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
 import Link from "next/link";
-import '../../styles/Product.css'
+import '../../styles/Product.css';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);

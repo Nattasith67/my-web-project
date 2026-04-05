@@ -6,13 +6,13 @@ export async function GET() {
   try {
     const promisePool = pool.promise();
     const [rows] = await promisePool.query(
-      "SELECT id, category_name FROM categories",
+      "SELECT id, username, password FROM users",
     );
-    console.log("Categories from DB:", rows);
+    console.log("Users from DB:", rows);
 
     return NextResponse.json(rows);
   } catch (e) {
-    console.error("Error in GET categories:", e);
+    console.error("Error in GET Users:", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
@@ -21,17 +21,17 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name } = body;
+    const { username, password } = body;
 
 
     const [result] = await pool
       .promise()
-      .query("INSERT INTO categories (category_name) VALUES (?)", [name]);
+      .query("INSERT INTO users (username, password) VALUES (?, ?)", [username, password]);
 
     console.log("Insert result:", result); // debug
 
     return NextResponse.json({
-      message: "Category created successfully",
+      message: "Username and password created successfully",
       id: result.insertId,
     });
   } catch (error) {

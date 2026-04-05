@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { mysqlPool } from "@/utils/db";
 import "../../styles/dashboard.css";
 export default function Dashboard() {
   const [stats, setStats] = useState({
