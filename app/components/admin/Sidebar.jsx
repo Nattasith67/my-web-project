@@ -22,7 +22,7 @@ export default function Sidebar() {
       <header>
         <div className='image-text'>
           <span className='image'>
-            <img src="/admin-avatar.png" alt="Admin" />
+            
           </span>
           <div className='header-text'>
             <span className='name'>Admin</span>

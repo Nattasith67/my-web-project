@@ -17,10 +17,8 @@ export default function CategoryPage() {
         const res = await fetch("/api/category");
         const data = await res.json();
         
-        const finalData = Array.isArray(data) ? data : [];
-        
-        setCategory(finalData);
-        setFilteredCategory(finalData);
+        setCategory(data);
+        setFilteredCategory(data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -50,7 +48,7 @@ export default function CategoryPage() {
     if (!Array.isArray(category)) return;
 
     const filtered = category.filter((c) =>
-      c.category_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      c.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCategory(filtered);
   }, [searchTerm, category]);
@@ -88,10 +86,9 @@ export default function CategoryPage() {
             </tr>
           </thead>
           <tbody>
-            {/* ผมเปลี่ยนจาก category เป็น item เพื่อไม่ให้ชื่อซ้ำกับ state หลัก จะได้ไม่งงครับ */}
-            {filteredCategory.map((item, index) => (
-              <tr key={`${item.id}-${index}`} className="row">
-                <td>{item.category_name}</td>
+            {filteredCategory.map((item) => (
+              <tr key={item.id} className="row">
+                <td>{item.name}</td>
                 <td>
                   <div className="actions">
                     <Link
@@ -101,7 +98,6 @@ export default function CategoryPage() {
                       <Edit size={16} />
                     </Link>
                     <button
-                      // ✅ แก้จุดที่ 2: เปลี่ยนจาก c.id เป็น item.id
                       onClick={() => handleDelete(item.id)}
                       className="btn-delete"
                     >

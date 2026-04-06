@@ -6,10 +6,8 @@ export async function GET() {
   try {
     const promisePool = pool.promise();
     const [rows] = await promisePool.query(
-      "SELECT id, category_name FROM categories",
+      "SELECT * FROM categories",
     );
-    console.log("Categories from DB:", rows);
-
     return NextResponse.json(rows);
   } catch (e) {
     console.error("Error in GET categories:", e);
@@ -26,9 +24,7 @@ export async function POST(request) {
 
     const [result] = await pool
       .promise()
-      .query("INSERT INTO categories (category_name) VALUES (?)", [name]);
-
-    console.log("Insert result:", result); // debug
+      .query("INSERT INTO categories (name) VALUES (?)", [name]);
 
     return NextResponse.json({
       message: "Category created successfully",

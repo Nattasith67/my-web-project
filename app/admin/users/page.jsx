@@ -15,11 +15,8 @@ export default function UsersPage() {
       try {
         const res = await fetch("/api/user");
         const data = await res.json();
-
-        const finalData = Array.isArray(data) ? data : [];
-
-        setUsers(finalData);
-        setFilteredUsers(finalData);
+        setUsers(data);
+        setFilteredUsers(data);
       } catch (err) {
         console.error("Error fetching users:", err);
       } finally {
@@ -47,7 +44,7 @@ export default function UsersPage() {
     }
   }
 
-  // ระบบค้นหา (แก้ให้ใช้ username)
+  // ระบบค้นหา
   useEffect(() => {
     const filtered = users.filter((u) =>
       u.username?.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -91,12 +88,10 @@ export default function UsersPage() {
           </thead>
 
           <tbody>
-            {filteredUsers.map((user, index) => (
-              <tr key={`${user.id}-${index}`} className="row">
+            {filteredUsers.map((user) => (
+              <tr key={user.id} className="row">
                 <td>{user.id}</td>
                 <td>{user.username}</td>
-
-                {/* ✅ เพิ่ม password กลับมา */}
                 <td>{user.password}</td>
 
                 <td>

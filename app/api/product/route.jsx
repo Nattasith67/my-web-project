@@ -8,16 +8,17 @@ export async function GET() {
     const promisePool = pool.promise();
     const [rows] = await promisePool.query(
       `SELECT 
-  p.id,
-  p.name AS product_name,
-  p.description,
-  p.price,
-  p.stock_quantity,
-  c.category_name,
-  p.image_url
-FROM products p
-LEFT JOIN categories c 
-  ON p.category = c.id;`,
+      p.id,
+      p.name AS product_name,
+      p.description,
+      p.price,
+      p.stock_quantity,
+      p.category_id,
+      c.name AS category_name,
+      p.image_url
+      FROM products p
+      LEFT JOIN categories c 
+      ON p.category_id = c.id;`,
     );
     return NextResponse.json(rows);
   } catch (e) {
@@ -30,14 +31,14 @@ LEFT JOIN categories c
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, description, price, stock_quantity, category, image_url } =
+    const { name, description, price, stock_quantity, category_id, image_url } =
       body;
 
     const [result] = await pool
       .promise()
       .query(
-        "INSERT INTO products (name, description, price, stock_quantity, category, image_url) VALUES (?, ?, ?, ?, ?, ?)",
-        [name, description, price, stock_quantity, category, image_url],
+        "INSERT INTO products (name, description, price, stock_quantity, category_id, image_url) VALUES (?, ?, ?, ?, ?, ?)",
+        [name, description, price, stock_quantity, category_id, image_url],
       );
 
     return NextResponse.json({

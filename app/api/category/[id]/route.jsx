@@ -32,7 +32,7 @@ export async function PUT(request, { params }) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const { category_name } = body;
+    const { name } = body;
 
     const promisePool = pool.promise();
 
@@ -50,8 +50,8 @@ export async function PUT(request, { params }) {
     }
 
     await promisePool.query(
-      'UPDATE categories SET category_name = ? WHERE id = ?',
-      [category_name ?? "", id]
+      'UPDATE categories SET name = ? WHERE id = ?',
+      [name ?? "", id]
     );
 
     // ดึงข้อมูลใหม่

@@ -33,7 +33,7 @@ export async function PUT(request, { params }) { // เพิ่ม { params }
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, description, price, stock_quantity, category, image_url } = body;
+    const { name, description, price, stock_quantity, category_id, image_url } = body;
     
     const promisePool = pool.promise();
     
@@ -46,8 +46,8 @@ export async function PUT(request, { params }) { // เพิ่ม { params }
     }
 
     await promisePool.query(
-      'UPDATE products SET name = ?, description = ?, price = ?, stock_quantity = ?, category = ?, image_url = ? WHERE id = ?',
-      [name, description ?? "", price ?? 0, stock_quantity ?? 0, category ?? "", image_url ?? "", id]
+      'UPDATE products SET name = ?, description = ?, price = ?, stock_quantity = ?, category_id = ?, image_url = ? WHERE id = ?',
+      [name, description ?? "", price ?? 0, stock_quantity ?? 0, category_id ?? "", image_url ?? "", id]
     );
 
     const [rows] = await promisePool.query(

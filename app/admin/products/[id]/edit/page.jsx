@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -15,7 +14,7 @@ export default function ProductEdit() {
     category: "",
     image_url: "",
   });
-
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -31,7 +30,7 @@ export default function ProductEdit() {
           description: data.description ?? "",
           price: data.price ?? "",
           stock_quantity: data.stock_quantity ?? "",
-          category: data.category ?? "",
+          category: data.category_id ?? "",
           image_url: data.image_url ?? "",
         });
       } else {
@@ -41,6 +40,14 @@ export default function ProductEdit() {
     })();
   }, [id]);
 
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/category");
+      const data = await res.json();
+      setCategories(data);
+    })();
+  }, []);
+
   const onChange = (e) =>
     setForm({
       ...form,
@@ -49,9 +56,9 @@ export default function ProductEdit() {
 
   // บันทึกข้อมูล
   async function onSubmit(e) {
-    e.preventDefault()
-    setSaving(true)
-    setError("")
+    e.preventDefault();
+    setSaving(true);
+    setError("");
     try {
       const res = await fetch(`/api/product/${id}`, {
         method: "PUT",
@@ -59,7 +66,10 @@ export default function ProductEdit() {
         body: JSON.stringify({
           ...form,
           price: form.price ? Number(form.price) : null,
-          stock_quantity: form.stock_quantity ? Number(form.stock_quantity) : null,
+          stock_quantity: form.stock_quantity
+            ? Number(form.stock_quantity)
+            : null,
+            category_id: form.category,
         }),
       });
 
@@ -82,15 +92,16 @@ export default function ProductEdit() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto" }}>
-      <h1>Edit Product</h1>
+    <div className="edit-container">
+      <h1 className="header">แก้ไขสินค้า</h1>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+      <form onSubmit={onSubmit} className="edit-form">
         <input
           name="name"
           placeholder="ชื่อสินค้า"
           value={form.name}
           onChange={onChange}
+          className="form-input"
           required
         />
 
@@ -100,6 +111,7 @@ export default function ProductEdit() {
           placeholder="ราคา"
           value={form.price}
           onChange={onChange}
+          className="form-input"
           required
         />
 
@@ -109,21 +121,30 @@ export default function ProductEdit() {
           placeholder="จำนวนสต็อก"
           value={form.stock_quantity}
           onChange={onChange}
+          className="form-input"
           required
         />
 
-        <input
+        <select
           name="category"
-          placeholder="หมวดหมู่"
           value={form.category}
           onChange={onChange}
-        />
+          className="form-select"
+        >
+          <option value="">-- เลือกหมวดหมู่ --</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
 
         <input
           name="image_url"
           placeholder="รูปภาพ URL"
           value={form.image_url}
           onChange={onChange}
+          className="form-input"
         />
 
         <textarea
@@ -132,15 +153,20 @@ export default function ProductEdit() {
           rows={4}
           value={form.description}
           onChange={onChange}
+          className="form-textarea"
         />
 
-        <button disabled={saving}>{saving ? "Saving..." : "บันทึก"}</button>
+        <button disabled={saving} className="form-button">
+          {saving ? "Saving..." : "บันทึก"}
+        </button>
 
-        {error && <div style={{ color: "crimson" }}>{error}</div>}
+        {error && <div className="error-message">{error}</div>}
       </form>
 
       <p>
-        <Link href="/admin/products">Cancel</Link>
+        <Link href="/admin/products" className="cancel-link">
+          Cancel
+        </Link>
       </p>
     </div>
   );

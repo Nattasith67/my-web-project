@@ -2,30 +2,22 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
 import Link from "next/link";
-import '../../styles/Product.css';
+import "../../styles/product/Product.css";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         const res = await fetch("/api/product");
         const data = await res.json();
-        
-        console.log("Products data:", data);
-        
-        if (Array.isArray(data)) {
-          setProducts(data);
-          setFilteredProducts(data);
-        } else {
-          console.error("API returned non-array data:", data);
-          setProducts([]);
-          setFilteredProducts([]);
-        }
+        setProducts(data);
+        setFilteredProducts(data);
       } catch (error) {
         console.error("Error fetching products:", error);
         setProducts([]);
@@ -107,8 +99,8 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((product, index) => (
-              <tr key={`product-${product.id}-${index}`} className="row">
+            {filteredProducts.map((product) => (
+              <tr key={product.id} className="row">
                 <td>
                   <img
                     src={product.image_url || "/images/placeholder.jpg"}

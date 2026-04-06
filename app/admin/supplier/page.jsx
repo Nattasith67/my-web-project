@@ -94,7 +94,7 @@ export default function SupplierPage() {
 
           <tbody>
             {filteredSuppliers.map((s, index) => (
-              <tr key={`${s.id}-${index}`} className="row">
+              <tr key={s.id} className="row">
                 <td>{s.id}</td>
                 <td>{s.name}</td>
                 <td>{s.phone}</td>

@@ -32,7 +32,7 @@ export default function CategoryEdit() {
         console.log("Category data:", data);
         
         setForm({
-          name: data.category_name || ""
+          name: data.name || ""
         });
       } catch (err) {
         console.error("Fetch error:", err);
@@ -57,7 +57,7 @@ export default function CategoryEdit() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          category_name: form.name
+          name: form.name
         })
       });
       
