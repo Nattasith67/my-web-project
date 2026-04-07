@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const promisePool = pool.promise();
     const [rows] = await promisePool.query(
-      "SELECT * FROM categories",
+      "SELECT id, name FROM categories",
     );
     return NextResponse.json(rows);
   } catch (e) {

@@ -11,10 +11,10 @@ export default function Sidebar() {
   { id: 1, href: '/admin/dashboard', label: 'Dashboard', icon: '🏠' },
   { id: 2, href: '/admin/products', label: 'สินค้า', icon: '📦' },
   { id: 3, href: '/admin/category', label: 'หมวดหมู่', icon: '📚'},
-  { id: 4, href: '', label: 'ออเดอร์', icon: '🛒' },
+  { id: 4, href: '/admin/purchase', label: 'Purchase Order', icon: '🛒' },
   { id: 5, href: '/admin/users', label: 'ผู้ใช้', icon: '👥' },
   { id: 6, href: '/admin/supplier', label: 'supplier', icon: '🚚' },
-  { id: 7, href: '', label: 'ตั้งค่า', icon: '⚙️' },
+  { id: 7, href: '/admin/customers', label: 'ลูกค้า', icon: '👤' }
 ];
 
   return (

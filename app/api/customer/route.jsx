@@ -7,17 +7,7 @@ export async function GET() {
   try {
     const promisePool = pool.promise();
     const [rows] = await promisePool.query(
-      `SELECT 
-      p.id,
-      p.name AS product_name,
-      p.description,
-      p.price,
-      p.stock_quantity,
-      p.category_id,
-      c.name AS category_name,
-      p.image_url
-      FROM products p
-      LEFT JOIN categories c  ON p.category_id = c.id;`
+      `SELECT * FROM customers`
     );
     return NextResponse.json(rows);
   } catch (e) {
@@ -30,18 +20,17 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, description, price, stock_quantity, category_id, image_url } =
-      body;
+    const { name, lastname, username, password } = body;
 
     const [result] = await pool
       .promise()
       .query(
-        "INSERT INTO products (name, description, price, stock_quantity, category_id, image_url) VALUES (?, ?, ?, ?, ?, ?)",
-        [name, description, price, stock_quantity, category_id, image_url],
+        "INSERT INTO customers (name, lastname, username, password) VALUES (?, ?, ?, ?)",
+        [name, lastname, username, password],
       );
 
     return NextResponse.json({
-      message: "Product created successfully",
+      message: "Customer created successfully",
       id: result.insertId,
     });
   } catch (error) {
