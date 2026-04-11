@@ -1,0 +1,296 @@
+:root {
+    --main-color: #0059ff;
+    --bg-light: #f7f7f7;
+    --text-color: #333333;
+    --border-color: #e5e7eb;
+}
+
+.form-page {
+    background-color: var(--bg-light);
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.page-header {
+    background-color: var(--main-color);
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    color: white;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+/* ปรับความกว้างของฟอร์มให้กว้างขึ้นสำหรับ Purchase */
+.form-container.wide {
+    background-color: transparent;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+    box-shadow: none;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ส่วนของแต่ละ Section */
+.form-section {
+    background-color: white;
+    padding: 24px;
+    border-radius: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+    color: var(--main-color);
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 10px;
+}
+
+/* Grid สำหรับข้อมูลหลัก */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.form-input {
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    background-color: #fff;
+}
+
+.form-input:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 3px rgba(0, 89, 255, 0.1);
+}
+
+/* รายการสินค้า */
+.items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.item-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.item-index {
+    font-weight: bold;
+    color: #64748b;
+    width: 20px;
+}
+
+.flex-1 { flex: 1; min-width: 100px; }
+.flex-2 { flex: 2; min-width: 200px; }
+
+.item-total {
+    width: 120px;
+    text-align: right;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.btn-add-item {
+    background-color: #e0efff;
+    color: var(--main-color);
+    border: 1px dashed var(--main-color);
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-add-item:hover {
+    background-color: #cce4ff;
+}
+
+.btn-delete-item {
+    background-color: #fee2e2;
+    color: #dc2626;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-delete-item:hover:not(:disabled) {
+    background-color: #fca5a5;
+}
+
+.btn-delete-item:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* สรุปยอด */
+.summary-section {
+    background-color: white;
+    padding: 24px;
+    border-radius: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.remarks-group {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.remarks-group label {
+    font-weight: 600;
+}
+
+.calc-block {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.calc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.calc-input {
+    width: 100px;
+    padding: 6px 10px;
+    text-align: right;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+}
+
+.calc-input:focus {
+    border-color: var(--main-color);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 4px 0;
+}
+
+.fw-bold { font-weight: bold; }
+.text-muted { color: #64748b; font-size: 0.9rem; }
+.text-success { color: #16a34a; font-weight: bold; }
+.text-danger { color: #dc2626; font-weight: bold; }
+
+.calc-row.total {
+    font-size: 1.25rem;
+}
+
+/* ปุ่ม Action ด้านล่าง */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.btn-submit {
+    background-color: #16a34a; /* สีเขียวสำหรับปุ่มบันทึก */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: #15803d;
+}
+
+.btn-submit:disabled {
+    background-color: #86efac;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background-color: white;
+    color: #475569;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #f1f5f9;
+}
+
+.error-message {
+    color: #dc3545;
+    background-color: #ffe6e6;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid #dc3545;
+}

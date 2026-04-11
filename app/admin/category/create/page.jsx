@@ -37,22 +37,31 @@ export default function CreateCategoryPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto" }}>
-      <h1>สร้างหมวดหมู่ใหม่</h1>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+    <div className="form-container">
+      <h1 className="header">สร้างหมวดหมู่ใหม่</h1>
+
+      <form onSubmit={onSubmit} className="custom-form">
         <input 
           name="name" 
           placeholder="ชื่อหมวดหมู่" 
           value={form.name} 
           onChange={onChange} 
+          className="form-input"
           required 
         />
-        <button disabled={saving}>
-          {saving ? "Saving..." : "สร้างหมวดหมู่"}
+
+        <button disabled={saving} className="form-button">
+          {saving ? "กำลังบันทึก..." : "สร้างหมวดหมู่"}
         </button>
-        {error && <div style={{ color: "crimson" }}>{error}</div>}
+
+        {error && <div className="error-message">{error}</div>}
       </form>
-      <p><Link href="/admin/category">กลับไปหน้าหมวดหมู่</Link></p>
+
+      <div className="cancel-link-container">
+        <Link href="/admin/category" className="cancel-link">
+          กลับไปหน้าหมวดหมู่
+        </Link>
+      </div>
     </div>
   );
 }

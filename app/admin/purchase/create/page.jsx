@@ -2,64 +2,107 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import "./../../../styles/purchase/PurchaseForm.css";
 
-export default function CreatePurchaseItemPage() {
+export default function CreatePurchaseWithItemsPage() {
   const router = useRouter();
 
   const [form, setForm] = useState({
-    purchase_id: "",
-    product_id: "",
-    quantity: "",
-    unit_price: "",
+    po_number: "",
+    supplier_id: "",
+    user_id: 1,
+    purchase_date: "",
+    status: "Pending",
+    remarks: "",
+    tax_rate: 0,
+    paid_to_date: 0,
   });
 
-  const [purchases, setPurchases] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [items, setItems] = useState([
+    {
+      product_id: "",
+      quantity: 1,
+      unit_price: "",
+      total_price: 0
+    },
+  ]);
 
+  const [suppliers, setSuppliers] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     (async () => {
-      try {
-        const [pRes, prodRes] = await Promise.all([
-          fetch("/api/purchase"),
-          fetch("/api/product"),
-        ]);
-
-        const pData = await pRes.json();
-        const prodData = await prodRes.json();
-
-        setPurchases(pData);
-        setProducts(prodData);
-      } catch (err) {
-        console.error(err);
-      }
+      const response = await fetch("/api/supplier");
+      const data = await response.json();
+      setSuppliers(data);
     })();
   }, []);
 
-  const onChange = (e) => {
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/user");
+      const data = await response.json();
+      setUsers(data);
+    })();
+  }, []);
+
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("/api/product");
+      const data = await response.json();
+      setProducts(data);
+    })();
+  }, []);
+
+  const onFormChange = (e) => {
     const { name, value } = e.target;
-
-    setForm((prev) => {
-      const updatedForm = { ...prev, [name]: value };
-
-      // ทริคเพิ่มเติม: ถ้าเปลี่ยนสินค้า ให้ดึงราคาของสินค้านั้นมาใส่อัตโนมัติ!
-      if (name === "product_id") {
-        const selectedProduct = products.find((p) => p.id === Number(value));
-        if (selectedProduct) {
-          // สมมติว่าในตาราง products ของคุณมีคอลัมน์ชื่อ price
-          updatedForm.unit_price = selectedProduct.price;
-        } else {
-          updatedForm.unit_price = ""; // ถ้าไม่ได้เลือกสินค้า ให้ล้างค่าราคา
-        }
-      }
-
-      return updatedForm;
-    });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const total_price = Number(form.quantity || 0) * Number(form.unit_price || 0);
+  const onItemChange = (index, field, value) => {
+    const newItems = [...items];
+    newItems[index][field] = value;
+
+    if (field === "product_id") {
+      const selectedProduct = products.find((product) => product.id === Number(value));
+      newItems[index].unit_price = selectedProduct ? selectedProduct.price : "";
+    }
+
+    const qty = Number(newItems[index].quantity) || 0;
+    const price = Number(newItems[index].unit_price) || 0;
+    newItems[index].total_price = qty * price;
+
+    setItems(newItems);
+  };
+
+  const addItemRow = () => {
+    setItems([
+      ...items,
+      {
+        product_id: "",
+        quantity: 1,
+        unit_price: "",
+        total_price: 0
+      }
+    ]);
+  };
+
+  const removeItemRow = (index) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setItems(newItems);
+  };
+
+  const subtotal = items.reduce((sum, item) => sum + (item.total_price || 0), 0);
+  const taxRate = Number(form.tax_rate) || 0;
+  const taxAmount = subtotal * (taxRate / 100);
+  const total = subtotal + taxAmount;
+  const paidToDate = Number(form.paid_to_date) || 0;
+  const balanceDue = total - paidToDate;
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -67,22 +110,39 @@ export default function CreatePurchaseItemPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/purchaseitem", {
+      const payload = {
+        purchase: {
+          po_number: form.po_number,
+          supplier_id: form.supplier_id ? Number(form.supplier_id) : null,
+          user_id: Number(form.user_id) || 1,
+          purchase_date: form.purchase_date || null,
+          status: form.status,
+          remarks: form.remarks,
+          subtotal: subtotal,
+          tax_rate: taxRate,
+          tax_amount: taxAmount,
+          total_amount: total,
+          paid_to_date: paidToDate,
+          balance_due: balanceDue,
+        },
+        items: items.map((item) => ({
+          product_id: Number(item.product_id),
+          quantity: Number(item.quantity),
+          unit_price: Number(item.unit_price),
+          total_price: Number(item.total_price),
+        })),
+      };
+
+      const res = await fetch("/api/purchase", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          purchase_id: Number(form.purchase_id),
-          product_id: Number(form.product_id),
-          quantity: Number(form.quantity),
-          unit_price: Number(form.unit_price),
-          total_price, // ส่งราคารวมไปเก็บใน DB ด้วย
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Create failed");
 
-      alert("เพิ่มรายการสำเร็จ!");
+      alert("สร้างใบสั่งซื้อและรายการสินค้าสำเร็จ!");
       router.push("/admin/purchases");
     } catch (err) {
       setError(err.message);
@@ -92,133 +152,175 @@ export default function CreatePurchaseItemPage() {
   }
 
   return (
-    <div
-      style={{ maxWidth: 640, margin: "24px auto", fontFamily: "sans-serif" }}
-    >
-      <h2>เพิ่มรายการสินค้า (Purchase Item)</h2>
+    <div className="form-page">
+      <div className="page-header">
+        <h1>สร้างใบสั่งซื้อใหม่</h1>
+      </div>
 
-      <form
-        onSubmit={onSubmit}
-        style={{ display: "grid", gap: 16, marginTop: 20 }}
-      >
-        {/* เลือก Purchase */}
-        <div>
-          <label
-            style={{ display: "block", marginBottom: 4, fontWeight: "bold" }}
-          >
-            ใบสั่งซื้อ
-          </label>
-          <select
-            name="purchase_id"
-            value={form.purchase_id}
-            onChange={onChange}
-            required
-            style={{ width: "100%", padding: 8 }}
-          >
-            <option value="">-- เลือกใบสั่งซื้อ --</option>
-            {purchases.map((p) => (
-              <option key={p.id} value={p.id}>
-                #{p.po_number || p.id} -{" "}
-                {p.supplier_name || "ไม่ระบุซัพพลายเออร์"}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* เลือกสินค้า */}
-        <div>
-          <label
-            style={{ display: "block", marginBottom: 4, fontWeight: "bold" }}
-          >
-            สินค้า
-          </label>
-          <select
-            name="product_id"
-            value={form.product_id}
-            onChange={onChange}
-            required
-            style={{ width: "100%", padding: 8 }}
-          >
-            {products.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.product_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* จำนวน และ ราคาต่อหน่วย */}
-        <div style={{ display: "flex", gap: 16 }}>
-          <div style={{ flex: 1 }}>
-            <label
-              style={{ display: "block", marginBottom: 4, fontWeight: "bold" }}
-            >
-              จำนวน
-            </label>
-            <input
-              name="quantity"
-              type="number"
-              min="1"
-              value={form.quantity}
-              onChange={onChange}
-              required
-              style={{ width: "100%", padding: 8 }}
-            />
+      <div className="form-container wide">
+        <form onSubmit={onSubmit} className="custom-form">
+          
+          {/* --- ส่วนที่ 1: ข้อมูลหลัก --- */}
+          <div className="form-section">
+            <h3 className="section-title">ข้อมูลใบสั่งซื้อ</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>PO Number *</label>
+                <input name="po_number" type="text" value={form.po_number} onChange={onFormChange} required className="form-input" placeholder="เช่น PO-2023-001" />
+              </div>
+              <div className="form-group">
+                <label>วันที่สั่งซื้อ</label>
+                <input name="purchase_date" type="date" value={form.purchase_date} onChange={onFormChange} className="form-input" />
+              </div>
+              <div className="form-group">
+                <label>ซัพพลายเออร์</label>
+                <select name="supplier_id" value={form.supplier_id} onChange={onFormChange} className="form-input">
+                  <option value="">-- เลือกซัพพลายเออร์ --</option>
+                  {suppliers.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      </option>))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>ผู้สร้าง / ผู้ดูแล</label>
+                <select name="user_id" value={form.user_id} onChange={onFormChange} className="form-input">
+                  <option value="">-- เลือกผู้ใช้งาน --</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.username }
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>สถานะ</label>
+                <select name="status" value={form.status} onChange={onFormChange} className="form-input">
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div style={{ flex: 1 }}>
-            <label
-              style={{ display: "block", marginBottom: 4, fontWeight: "bold" }}
-            >
-              ราคาต่อหน่วย
-            </label>
-            <input
-              name="unit_price"
-              type="number"
-              min="0"
-              step="0.01"
-              value={form.unit_price}
-              onChange={onChange}
-              required
-              style={{ width: "100%", padding: 8 }}
-            />
+
+          {/* --- ส่วนที่ 2: รายการสินค้า --- */}
+          <div className="form-section">
+            <h3 className="section-title">รายการสินค้า</h3>
+            
+            <div className="items-container">
+              {items.map((item, index) => (
+                <div key={index} className="item-row">
+                  <span className="item-index">{index + 1}.</span>
+                  
+                  <select
+                    value={item.product_id}
+                    onChange={(e) => onItemChange(index, "product_id", e.target.value)}
+                    required
+                    className="form-input flex-2"
+                  >
+                    <option value="">-- เลือกสินค้า --</option>
+                    {products.map((p) => (<option key={p.id} value={p.id}>{p.product_name}</option>))}
+                  </select>
+
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="จำนวน"
+                    value={item.quantity}
+                    onChange={(e) => onItemChange(index, "quantity", e.target.value)}
+                    required
+                    className="form-input flex-1"
+                  />
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="ราคา/หน่วย"
+                    value={item.unit_price}
+                    onChange={(e) => onItemChange(index, "unit_price", e.target.value)}
+                    required
+                    className="form-input flex-1"
+                  />
+
+                  <div className="item-total">
+                    {item.total_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeItemRow(index)}
+                    disabled={items.length === 1}
+                    className="btn-delete-item"
+                    title="ลบรายการ"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={addItemRow} className="btn-add-item">
+              <Plus size={16} /> เพิ่มรายการสินค้า
+            </button>
           </div>
-        </div>
 
-        {/* แสดงราคารวม */}
-        <div
-          style={{ padding: 12, backgroundColor: "#f0f0f0", borderRadius: 4 }}
-        >
-          <strong>ราคารวม (Total Price): </strong>
-          <span style={{ color: "green", fontSize: "1.2em" }}>
-            {total_price.toLocaleString()} บาท
-          </span>
-        </div>
+          <div className="summary-section">
+            <div className="remarks-group">
+              <label>หมายเหตุ</label>
+              <textarea name="remarks" value={form.remarks} onChange={onFormChange} rows={5} className="form-input" placeholder="พิมพ์หมายเหตุเพิ่มเติมที่นี่..." />
+            </div>
+            
+            <div className="calc-block">
+              <div className="calc-row">
+                <span>Subtotal:</span>
+                <span className="fw-bold">{subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</span>
+              </div>
 
-        <button
-          type="submit"
-          disabled={saving}
-          style={{
-            padding: "10px",
-            backgroundColor: saving ? "#ccc" : "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-            cursor: saving ? "not-allowed" : "pointer",
-          }}
-        >
-          {saving ? "กำลังบันทึก..." : "เพิ่มรายการ"}
-        </button>
+              <div className="calc-row">
+                <span>Tax (%):</span>
+                <input name="tax_rate" type="number" min="0" step="0.01" value={form.tax_rate} onChange={onFormChange} className="calc-input" />
+              </div>
 
-        {error && (
-          <div style={{ color: "crimson", textAlign: "center" }}>{error}</div>
-        )}
-      </form>
+              <div className="calc-row text-muted">
+                <span>Tax Amount:</span>
+                <span>{taxAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</span>
+              </div>
 
-      <p style={{ marginTop: 24 }}>
-        <Link href="/admin/purchases" style={{ color: "blue" }}>
-          &larr; กลับไปหน้ารายการสั่งซื้อ
-        </Link>
-      </p>
+              <div className="calc-row total text-success">
+                <span>Total:</span>
+                <span>{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿</span>
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="calc-row">
+                <span>Paid to Date:</span>
+                <input name="paid_to_date" type="number" min="0" step="0.01" value={form.paid_to_date} onChange={onFormChange} className="calc-input" />
+              </div>
+
+              <div className="calc-row total">
+                <span>Balance Due:</span>
+                <span className={balanceDue > 0 ? "text-danger" : "text-success"}>
+                  {balanceDue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ฿
+                </span>
+              </div>
+            </div>
+          </div>
+          {error && <div className="error-message">{error}</div>}
+          <div className="form-actions">
+            <Link href="/admin/purchases" className="btn-cancel">
+              <ArrowLeft size={18} /> ยกเลิก
+            </Link>
+            
+            <button type="submit" disabled={saving} className="btn-submit">
+              <Save size={18} />
+              {saving ? "กำลังบันทึก..." : "บันทึกใบสั่งซื้อ"}
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
   );
 }

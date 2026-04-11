@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Save, ArrowLeft } from "lucide-react"; // เพิ่มไอคอน
+import "../../../styles/user/Form.css"; // สร้างไฟล์ CSS สำหรับหน้าฟอร์มโดยเฉพาะ
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -46,37 +48,52 @@ export default function CreateUserPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto" }}>
-      <h1>สร้างผู้ใช้ใหม่</h1>
+    <div className="form-page">
+      <div className="page-header">
+        <h1>สร้างผู้ใช้ใหม่</h1>
+      </div>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-        <input
-          name="username"
-          placeholder="Username"
-          value={form.username}
-          onChange={onChange}
-          required
-        />
+      <div className="form-container">
+        <form onSubmit={onSubmit} className="custom-form">
+          <div className="form-group">
+            <label>Username</label>
+            <input
+              name="username"
+              placeholder="กรอกชื่อผู้ใช้"
+              value={form.username}
+              onChange={onChange}
+              required
+              className="form-input"
+            />
+          </div>
 
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={onChange}
-          required
-        />
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              name="password"
+              type="password"
+              placeholder="กรอกรหัสผ่าน"
+              value={form.password}
+              onChange={onChange}
+              required
+              className="form-input"
+            />
+          </div>
 
-        <button disabled={saving}>
-          {saving ? "Saving..." : "สร้างผู้ใช้"}
-        </button>
+          {error && <div className="error-message">{error}</div>}
 
-        {error && <div style={{ color: "crimson" }}>{error}</div>}
-      </form>
-
-      <p>
-        <Link href="/admin/user">กลับไปหน้าผู้ใช้</Link>
-      </p>
+          <div className="form-actions">
+            <Link href="/admin/user" className="btn-cancel">
+              <ArrowLeft size={18} /> กลับ
+            </Link>
+            
+            <button type="submit" disabled={saving} className="btn-submit">
+              <Save size={18} />
+              {saving ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

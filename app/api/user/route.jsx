@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const promisePool = pool.promise();
     const [rows] = await promisePool.query(
-      "SELECT id, username, password FROM users",
+      "SELECT id, username, password FROM `users`",
     );
     console.log("Users from DB:", rows);
 
@@ -26,7 +26,7 @@ export async function POST(request) {
 
     const [result] = await pool
       .promise()
-      .query("INSERT INTO users (username, password) VALUES (?, ?)", [username, password]);
+      .query("INSERT INTO `user` (username, password) VALUES (?, ?)", [username, password]);
 
     console.log("Insert result:", result); // debug
 

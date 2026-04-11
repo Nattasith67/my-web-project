@@ -10,7 +10,6 @@ export default function CategoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCategory, setFilteredCategory] = useState([]);
 
-  // ดึงข้อมูลจาก API
   useEffect(() => {
     async function fetchCategory() {
       try {
@@ -28,7 +27,6 @@ export default function CategoryPage() {
     fetchCategory();
   }, []);
 
-  // ฟังก์ชันลบหมวดหมู่
   async function handleDelete(id) {
     if (!confirm("คุณต้องการลบหมวดหมู่นี้หรือไม่?")) return;
     try {
@@ -61,20 +59,21 @@ export default function CategoryPage() {
         <h1>จัดการหมวดหมู่</h1>
       </div>
 
-      <div className="btn-create">
+      {/* จัดกลุ่มปุ่ม Create และ Search bar ให้อยู่บรรทัดเดียวกันด้วย top-actions */}
+      <div className="top-actions">
         <Link href="/admin/category/create" className="btn-create">
           <Plus size={20} /> เพิ่มหมวดหมู่ใหม่
         </Link>
-      </div>
 
-      <div className="search-bar">
-        <Search size={20} />
-        <input
-          type="text"
-          placeholder="ค้นหาหมวดหมู่..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="search-bar">
+          <Search size={20} color="#666" />
+          <input
+            type="text"
+            placeholder="ค้นหาหมวดหมู่..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="category-table-container">
@@ -82,7 +81,7 @@ export default function CategoryPage() {
           <thead>
             <tr>
               <th>หมวดหมู่</th>
-              <th>Actions</th>
+              <th>จัดการ</th>
             </tr>
           </thead>
           <tbody>
@@ -95,13 +94,13 @@ export default function CategoryPage() {
                       href={`/admin/category/${item.id}/edit`}
                       className="btn-edit"
                     >
-                      <Edit size={16} />
+                      <Edit size={16} /> แก้ไข
                     </Link>
                     <button
                       onClick={() => handleDelete(item.id)}
                       className="btn-delete"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={16} /> ลบ
                     </button>
                   </div>
                 </td>

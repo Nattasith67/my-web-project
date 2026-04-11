@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
 import Link from "next/link";
+import "../../styles/user/User.css";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -55,35 +56,36 @@ export default function UsersPage() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="category-page">
+    <div className="user-page">
       <div className="page-header">
         <h1>จัดการผู้ใช้</h1>
       </div>
 
-      <div className="btn-create">
+      {/* จัดกลุ่มปุ่ม Create และ Search bar ให้อยู่บรรทัดเดียวกัน */}
+      <div className="top-actions">
         <Link href="/admin/users/create" className="btn-create">
           <Plus size={20} /> เพิ่มผู้ใช้ใหม่
         </Link>
+
+        <div className="search-bar">
+          <Search size={20} color="#666" />
+          <input
+            type="text"
+            placeholder="ค้นหาผู้ใช้..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="search-bar">
-        <Search size={20} />
-        <input
-          type="text"
-          placeholder="ค้นหาผู้ใช้..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div className="category-table-container">
-        <table className="category-table">
+      <div className="user-table-container">
+        <table className="user-table">
           <thead>
             <tr>
               <th>ID</th>
               <th>Username</th>
               <th>Password</th>
-              <th>Actions</th>
+              <th>จัดการ</th>
             </tr>
           </thead>
 
@@ -100,14 +102,14 @@ export default function UsersPage() {
                       href={`/admin/users/${user.id}/edit`}
                       className="btn-edit"
                     >
-                      <Edit size={16} />
+                      <Edit size={16} /> แก้ไข
                     </Link>
 
                     <button
                       onClick={() => handleDelete(user.id)}
                       className="btn-delete"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={16} /> ลบ
                     </button>
                   </div>
                 </td>
@@ -117,7 +119,7 @@ export default function UsersPage() {
         </table>
 
         {filteredUsers.length === 0 && (
-          <div className="no-category">
+          <div className="no-user">
             <p>ไม่พบผู้ใช้</p>
           </div>
         )}

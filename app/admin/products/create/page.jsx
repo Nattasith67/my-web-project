@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import "./../../../styles/AddProduct.css";
 
 export default function CreateProductPage() {
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function CreateProductPage() {
 
   const onChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
   async function onSubmit(e) {
     e.preventDefault();
     setSaving(true);
@@ -47,9 +49,7 @@ export default function CreateProductPage() {
           name: form.name,
           description: form.description,
           price: form.price ? Number(form.price) : 0,
-          stock_quantity: form.stock_quantity
-            ? Number(form.stock_quantity)
-            : 0,
+          stock_quantity: form.stock_quantity ? Number(form.stock_quantity) : 0,
           category_id: form.category || null,
           image_url: form.image_url,
         }),
@@ -69,15 +69,16 @@ export default function CreateProductPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto" }}>
-      <h1>สร้างสินค้าใหม่</h1>
+    <div className="form-container">
+      <h1 className="header">สร้างสินค้าใหม่</h1>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+      <form onSubmit={onSubmit} className="custom-form">
         <input
           name="name"
           placeholder="ชื่อสินค้า"
           value={form.name}
           onChange={onChange}
+          className="form-input"
           required
         />
 
@@ -87,6 +88,7 @@ export default function CreateProductPage() {
           placeholder="ราคา"
           value={form.price}
           onChange={onChange}
+          className="form-input"
           required
         />
 
@@ -96,6 +98,7 @@ export default function CreateProductPage() {
           placeholder="จำนวนสต็อก"
           value={form.stock_quantity}
           onChange={onChange}
+          className="form-input"
           required
         />
 
@@ -103,8 +106,10 @@ export default function CreateProductPage() {
           name="category"
           value={form.category}
           onChange={onChange}
+          className="form-select"
         >
           <option value="">-- เลือกหมวดหมู่ --</option>
+          <option value="null">ไม่มีหมวดหมู่</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
               {cat.name}
@@ -117,6 +122,7 @@ export default function CreateProductPage() {
           placeholder="รูปภาพ URL"
           value={form.image_url}
           onChange={onChange}
+          className="form-input"
         />
 
         <textarea
@@ -125,18 +131,21 @@ export default function CreateProductPage() {
           rows={4}
           value={form.description}
           onChange={onChange}
+          className="form-textarea"
         />
 
-        <button disabled={saving}>
-          {saving ? "Saving..." : "สร้างสินค้า"}
+        <button disabled={saving} className="form-button">
+          {saving ? "กำลังบันทึก..." : "สร้างสินค้า"}
         </button>
 
-        {error && <div style={{ color: "crimson" }}>{error}</div>}
+        {error && <div className="error-message">{error}</div>}
       </form>
 
-      <p>
-        <Link href="/admin/products">กลับไปหน้าสินค้า</Link>
-      </p>
+      <div className="cancel-link-container">
+        <Link href="/admin/products" className="cancel-link">
+          กลับไปหน้าสินค้า
+        </Link>
+      </div>
     </div>
   );
 }

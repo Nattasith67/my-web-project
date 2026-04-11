@@ -10,7 +10,6 @@ export async function GET() {
     );
     return NextResponse.json(rows);
   } catch (e) {
-    console.error("Error in GET categories:", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

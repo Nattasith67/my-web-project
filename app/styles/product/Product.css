@@ -1,98 +1,163 @@
 :root {
     --main-color: #0059ff;
-    --odd-color: #8fc9ff;
+    --odd-color: #e0efff;
+    --bg-light: #f7f7f7;
+    --table-bg: #ffffff;
 }
 
 .products-page {
-    background-color: rgb(247, 247, 247);
+    background-color: var(--bg-light);
+    padding: 20px;
+    min-height: 100vh;
 }
 
 .page-header {
     background-color: var(--main-color);
-    padding: 1rem 0.5rem;
+    padding: 1rem 1.5rem;
     border-radius: 1rem;
     color: white;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 20px;
+}
+
+/* ปุ่ม Create */
 .btn-create {
     background-color: #0059ff;
-    margin: 1rem;
     color: white;
-    padding: 0.5rem 1rem;
-    width: 18%;
+    padding: 0.75rem 1.25rem;
     border-radius: 0.5rem;
     text-decoration: none;
-}
-input {
-     width: 60%;
-     padding: 0.5rem;
-     margin: 1.5rem;
+    transition: background-color 0.2s ease;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
 }
 
+.btn-create:hover {
+    background-color: #0046cc;
+}
+
+/* ช่องค้นหา */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 350px;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-left: 10px;
+    font-size: 1rem;
+    background: transparent;
+}
+
+/* ตาราง */
+.products-table-container {
+    overflow-x: auto;
+    background-color: var(--table-bg);
+    border-radius: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
 
 .products-table {
-    background-color: #ebebeb;
-    border-radius: 1rem;
     width: 100%;
-    border-collapse: collapse; /* เพิ่มนี้ */
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+.products-table th {
+    background-color: var(--main-color);
+    color: white;
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.products-table td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+}
+
+.products-table .row:nth-child(even) {
+    background-color: white;
 }
 
 .products-table .row:nth-child(odd) {
     background-color: var(--odd-color);
 }
 
-/* เพิ่มส่วนนี้สำหรับรูปภาพ */
-.products-table td {
-    padding: 20px; /* เพิ่ม padding ให้รูปมีที่ว่าง */
-    vertical-align: middle;
+.products-table .row:hover {
+    background-color: #f1f5f9;
 }
 
 .product-image {
-    width: 100px;        /* กำหนดขนาดตายตัว */
-    height: 100px;       /* ต้องมี height */
-    background-size: auto;   /* ครอบรูปให้เต็ม */
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
     border-radius: 8px;
-    display: block;
-}
-
-.product-info {
-    max-width: 200px; /* จำกัดความกว้าง */
+    border: 1px solid #eee;
 }
 
 .product-info h3 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    color: #1f2937;
 }
 
 .product-info p {
     margin: 0;
-    font-size: 14px;
-    color: #666;
-    line-height: 1.4;
+    font-size: 0.85rem;
+    color: #6b7280;
 }
 
 .price {
     font-weight: 600;
-    color: var(--main-color);
+    color: #0059ff;
 }
 
-/* ปุ่มใน table */
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
 .btn-edit, .btn-delete {
-    padding: 6px 12px;
+    padding: 8px 12px;
     border: none;
-    border-radius: 4px;
-    font-size: 12px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-right: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    color: white;
     text-decoration: none;
-    display: inline-block;
+    font-size: 0.9rem;
 }
 
 .btn-edit {
     background-color: #28a745;
-    color: white;
 }
 
 .btn-edit:hover {
@@ -101,22 +166,15 @@ input {
 
 .btn-delete {
     background-color: #dc3545;
-    color: white;
 }
 
 .btn-delete:hover {
     background-color: #c82333;
 }
 
-/* ปรับขนาดตาราง */
-.products-table th {
-    background-color: var(--main-color);
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-weight: 600;
-}
-
-.products-table td {
-    border-bottom: 1px solid #ddd;
+.no-products {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 1.1rem;
 }

@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import "../../../../styles/product/ProductEdit.css";
+
 
 export default function ProductEdit() {
   const { id } = useParams();
@@ -31,7 +33,7 @@ export default function ProductEdit() {
           price: data.price ?? "",
           stock_quantity: data.stock_quantity ?? "",
           category: data.category_id ?? "",
-          image_url: data.image_url ?? "",
+          image_url: data.image_url ?? null,
         });
       } else {
         setError(data?.error || "Not found");
@@ -40,6 +42,7 @@ export default function ProductEdit() {
     })();
   }, [id]);
 
+  // ดึงข้อมูลหมวดหมู่
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/category");
@@ -48,6 +51,7 @@ export default function ProductEdit() {
     })();
   }, []);
 
+  // อัปเดตฟอร์มเมื่อมีการเปลี่ยนแปลง
   const onChange = (e) =>
     setForm({
       ...form,
@@ -66,18 +70,11 @@ export default function ProductEdit() {
         body: JSON.stringify({
           ...form,
           price: form.price ? Number(form.price) : null,
-          stock_quantity: form.stock_quantity
-            ? Number(form.stock_quantity)
-            : null,
-            category_id: form.category,
+          stock_quantity: form.stock_quantity ? Number(form.stock_quantity) : null,
+          category_id: form.category,
         }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.error || "Update failed");
-      }
 
       alert("อัปเดตสินค้าสำเร็จ!");
       router.push("/admin/products");

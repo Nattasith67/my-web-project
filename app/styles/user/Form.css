@@ -1,0 +1,129 @@
+:root {
+    --main-color: #0059ff;
+    --bg-light: #f7f7f7;
+    --text-color: #333333;
+}
+
+.form-page {
+    background-color: var(--bg-light);
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.page-header {
+    background-color: var(--main-color);
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    color: white;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.form-input {
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    border-color: var(--main-color);
+    box-shadow: 0 0 0 3px rgba(0, 89, 255, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #f3f4f6;
+}
+
+.btn-submit {
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: #0046cc;
+}
+
+.btn-submit:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background-color: #f1f5f9;
+    color: #475569;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #e2e8f0;
+}
+
+.error-message {
+    color: #dc3545;
+    background-color: #ffe6e6;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid #dc3545;
+}

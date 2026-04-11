@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { Plus, CheckCircle, Trash2, Search } from "lucide-react";
 import Link from "next/link";
-import "../../styles/product/Product.css";
+import "./../../styles/purchase/Purchase.css";
 
 export default function PurchasePage() {
   const [purchases, setPurchases] = useState([]);
@@ -14,124 +14,139 @@ export default function PurchasePage() {
     async function fetchPurchases() {
       try {
         const res = await fetch("/api/purchase");
+        if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-        setPurchases(data);
-        setFilteredPurchases(data);
+        setPurchases(data || []);
+        setFilteredPurchases(data || []);
       } catch (error) {
         console.error("Error fetching purchases:", error);
-        setPurchases([]);
-        setFilteredPurchases([]);
       } finally {
         setLoading(false);
       }
     }
-
     fetchPurchases();
   }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() === "") {
+    const term = searchTerm.toLowerCase().trim();
+    if (term === "") {
       setFilteredPurchases(purchases);
     } else {
       const filtered = purchases.filter((p) =>
-        (p.name || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        (p.po_number || "").toLowerCase().includes(term) ||
+        (p.name || "").toLowerCase().includes(term)
       );
       setFilteredPurchases(filtered);
     }
   }, [searchTerm, purchases]);
 
-  const handleDelete = async (id) => {
-    if (confirm("คุณต้องการลบรายการนี้ใช่หรือไม่?")) {
-      try {
-        const res = await fetch(`/api/purchase/${id}`, {
-          method: "DELETE",
-        });
+  const handleSubmit = async (id) => {
+    if (!confirm("ยืนยันการอนุมัติ (Approve) ใบสั่งซื้อนี้?")) return;
+    try {
+      const res = await fetch(`/api/purchase/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Approved" }),
+      });
 
-        if (res.ok) {
-          setPurchases(purchases.filter((p) => p.id !== id));
-          setFilteredPurchases(filteredPurchases.filter((p) => p.id !== id));
-          alert("ลบข้อมูลสำเร็จ");
-        } else {
-          alert("ลบข้อมูลไม่สำเร็จ");
-        }
-      } catch (error) {
-        console.error("Error deleting purchase:", error);
-        alert("เกิดข้อผิดพลาดในการลบ");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "ไม่สามารถอนุมัติได้");
       }
+
+      setPurchases((prev) => prev.filter((item) => item.id !== id));
+      setFilteredPurchases((prev) => prev.filter((item) => item.id !== id));
+      alert("อนุมัติสำเร็จ");
+    } catch (error) {
+      console.error("Approve Error:", error);
+      alert(error.message || "เกิดข้อผิดพลาด");
     }
   };
 
-  if (loading) return <div>กำลังโหลด...</div>;
+  const handleDelete = async (id) => {
+    if (!confirm("คุณต้องการลบรายการนี้ใช่หรือไม่?")) return;
+    try {
+      const res = await fetch(`/api/purchase/${id}`, { method: "DELETE" });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "ไม่สามารถลบได้");
+      }
+
+      setPurchases((prev) => prev.filter((item) => item.id !== id));
+      setFilteredPurchases((prev) => prev.filter((item) => item.id !== id));
+      alert("ลบสำเร็จ");
+    } catch (error) {
+      console.error("Delete Error:", error);
+      alert(error.message || "ลบไม่สำเร็จ");
+    }
+  };
+
+  if (loading) return <div className="loading">กำลังโหลดข้อมูล...</div>;
 
   return (
-    <div className="products-page">
+    <div className="purchase-page">
       <div className="page-header">
-        <h1>จัดการการสั่งซื้อ</h1>
+        <h1>รายการใบสั่งซื้อรออนุมัติ (Pending)</h1>
       </div>
 
-      <div className="btn-create">
+      <div className="top-actions">
         <Link href="/admin/purchase/create" className="btn-create">
-          <Plus size={20} />
-          เพิ่มรายการสั่งซื้อ
+          <Plus size={20} />เพิ่มรายการสั่งซื้อ
         </Link>
+        <div className="search-bar">
+          <Search size={20} color="#666" />
+          <input
+            type="text"
+            placeholder="ค้นหาเลข PO หรือชื่อซัพพลายเออร์..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="search-bar">
-        <Search size={20} />
-        <input
-          type="text"
-          placeholder="ค้นหาการสั่งซื้อ..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div className="products-table-container">
-        <table className="products-table">
+      <div className="purchase-table-container">
+        <table className="purchase-table">
           <thead>
             <tr>
-              <th>ชื่อสินค้า</th>
-              <th>จำนวน</th>
-              <th>ราคา</th>
+              <th>เลขที่ PO</th>
+              <th>วันที่สั่งซื้อ</th>
+              <th>ซัพพลายเออร์</th>
+              <th>ยอดรวม</th>
+              <th>ผู้สร้าง</th>
               <th>จัดการ</th>
             </tr>
           </thead>
-
           <tbody>
-            {filteredPurchases.map((p) => (
-              <tr key={p.id}>
-                <td>{p.name}</td>
-                <td>{p.quantity}</td>
-                <td>{p.price}</td>
-                <td>
-                  <Link
-                    href={`/admin/purchase/${p.id}/edit`}
-                    className="btn-edit"
-                  >
-                    <Edit size={16} />
-                    แก้ไข
-                  </Link>
-
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    className="btn-delete"
-                  >
-                    <Trash2 size={16} />
-                    ลบ
-                  </button>
-                </td>
+            {filteredPurchases.length > 0 ? (
+              filteredPurchases.map((p) => (
+                <tr key={p.id} className="row">
+                  <td className="fw-bold">{p.po_number}</td>
+                  <td>{p.purchase_date ? new Date(p.purchase_date).toLocaleDateString() : "-"}</td>
+                  <td>{p.name || "ไม่ระบุ"}</td>
+                  <td className="text-primary fw-bold">
+                    {Number(p.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })} ฿
+                  </td>
+                  <td className="text-muted">{p.username || "System"}</td>
+                  <td>
+                    <div className="actions">
+                      <button type="button" onClick={() => handleSubmit(p.id)} className="btn-approve" style={{ backgroundColor: "#28a745", color: "white", border: "none", padding: "5px 10px", borderRadius: "4px", display: "flex", alignItems: "center", gap: "5px", cursor: "pointer" }}>
+                        <CheckCircle size={16} />Approve
+                      </button>
+                      <button type="button" onClick={() => handleDelete(p.id)} className="btn-delete">
+                        <Trash2 size={16} />ลบ
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", padding: "20px" }}>ไม่พบรายการใบสั่งซื้อที่รออนุมัติ</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-
-        {filteredPurchases.length === 0 && (
-          <div className="no-products">
-            <p>ไม่พบข้อมูล</p>
-          </div>
-        )}
       </div>
     </div>
   );
