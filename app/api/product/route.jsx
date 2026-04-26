@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/utils/db";
 
-// GET สินค้าทั้งหมด
-
 export async function GET() {
   try {
     const promisePool = pool.promise();
@@ -17,8 +15,9 @@ export async function GET() {
       c.name AS category_name,
       p.image_url
       FROM products p
-      LEFT JOIN categories c  ON p.category_id = c.id;`
+      LEFT JOIN categories c ON p.category_id = c.id;`
     );
+
     return NextResponse.json(rows);
   } catch (e) {
     console.error(e);
@@ -26,7 +25,6 @@ export async function GET() {
   }
 }
 
-// POST สร้างสินค้าใหม่
 export async function POST(request) {
   try {
     const body = await request.json();

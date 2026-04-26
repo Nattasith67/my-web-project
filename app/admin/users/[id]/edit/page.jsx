@@ -1,20 +1,42 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, ArrowLeft } from "lucide-react";
-import "../../../styles/user/Form.css";
+import { useParams } from "next/navigation";
+import "../../../../styles/user/Form.css";
 
-export default function CreateUserPage() {
+export default function EditUserPage() {
   const router = useRouter();
+  const { id } = useParams();
 
   const [form, setForm] = useState({
     username: "",
     password: ""
   });
 
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch(`/api/user/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const data = await res.json();
+        setForm({
+          username: data.username,
+          password: data.password
+        });
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+  }, [id]);
 
   const onChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,8 +47,8 @@ export default function CreateUserPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/user", {
-        method: "POST",
+      const res = await fetch(`/api/user/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: form.username,
@@ -36,9 +58,9 @@ export default function CreateUserPage() {
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data?.error || "Create failed");
+      if (!res.ok) throw new Error(data?.error || "Update failed");
 
-      alert("สร้างผู้ใช้สำเร็จ!");
+      alert("แก้ไขผู้ใช้สำเร็จ!");
       router.push("/admin/users");
     } catch (err) {
       setError(err.message);
@@ -47,10 +69,12 @@ export default function CreateUserPage() {
     }
   }
 
+  if (loading) return <div>Loading...</div>;
+
   return (
     <div className="form-page">
       <div className="page-header">
-        <h1>สร้างผู้ใช้ใหม่</h1>
+        <h1>แก้ไขผู้ใช้</h1>
       </div>
 
       <div className="form-container">

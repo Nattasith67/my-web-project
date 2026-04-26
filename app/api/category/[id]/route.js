@@ -27,7 +27,6 @@ export async function GET(_request, { params }) {
   }
 }
 
-// PUT แก้ไขหมวดหมู่
 export async function PUT(request, { params }) {
   try {
     const { id } = await params;
@@ -36,7 +35,6 @@ export async function PUT(request, { params }) {
 
     const promisePool = pool.promise();
 
-    // เช็คว่ามี id นี้ไหม
     const [exist] = await promisePool.query(
       "SELECT id FROM categories WHERE id = ?",
       [id]
@@ -54,14 +52,42 @@ export async function PUT(request, { params }) {
       [name ?? "", id]
     );
 
-    // ดึงข้อมูลใหม่
     const [rows] = await promisePool.query(
       "SELECT * FROM categories WHERE id = ?",
       [id]
     );
 
-    return NextResponse.json(rows[0],);
+    return NextResponse.json(rows[0]);
   } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(_request, { params }) {
+  try {
+    const { id } = await params;
+    const promisePool = pool.promise();
+
+    const [exist] = await promisePool.query(
+      "SELECT id FROM categories WHERE id = ?",
+      [id]
+    );
+
+    if (exist.length === 0) {
+      return NextResponse.json(
+        { error: "Category not found" },
+        { status: 404 }
+      );
+    }
+
+    await promisePool.query(
+      "DELETE FROM categories WHERE id = ?",
+      [id]
+    );
+
+    return NextResponse.json({ message: "Category deleted successfully" });
+  } catch (error) {
+    console.error("Error in DELETE:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

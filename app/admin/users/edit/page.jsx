@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Save, ArrowLeft } from "lucide-react";
-import "../../../styles/user/Form.css";
+import { Save, ArrowLeft } from "lucide-react"; // เพิ่มไอคอน
+import "../../../styles/user/Form.css"; // สร้างไฟล์ CSS สำหรับหน้าฟอร์มโดยเฉพาะ
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function CreateUserPage() {
           {error && <div className="error-message">{error}</div>}
 
           <div className="form-actions">
-            <Link href="/admin/users" className="btn-cancel">
+            <Link href="/admin/user" className="btn-cancel">
               <ArrowLeft size={18} /> กลับ
             </Link>
             

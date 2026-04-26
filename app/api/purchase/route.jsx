@@ -31,72 +31,53 @@ export async function GET() {
 
 export async function POST(request) {
   const connection = await pool.promise().getConnection();
-  
+
   try {
     const body = await request.json();
-    const { purchase, items } = body; 
+    const { purchase, items } = body;
 
-    // เริ่ม Transaction
     await connection.beginTransaction();
 
-    // 1. บันทึกข้อมูลลงตาราง purchases (เอาแค่ 7 columns ตามที่ระบุ)
     const [purchaseResult] = await connection.query(
       `INSERT INTO purchases (
-        po_number, 
-        supplier_id, 
-        user_id, 
-        purchase_date, 
-        total_amount, 
-        status, 
-        remarks
-      ) VALUES (?, ?, ?, ?, ?, ?, ?)`, // มี 7 เครื่องหมายคำถาม
+        po_number, supplier_id, user_id, purchase_date, total_amount, status, remarks
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         purchase.po_number,
-        purchase.supplier_id ? Number(purchase.supplier_id) : null,
-        purchase.user_id ? Number(purchase.user_id) : null,
-        purchase.purchase_date || null,
+        purchase.supplier_id,
+        purchase.user_id,
+        purchase.purchase_date,
         purchase.total_amount,
         purchase.status,
-        purchase.remarks
+        purchase.remarks,
       ]
     );
 
     const purchaseId = purchaseResult.insertId;
 
-    // 2. บันทึกรายการสินค้าลงตาราง purchase_items
-    if (items && items.length > 0) {
-      const itemValues = items.map(item => [
-        purchaseId,
-        item.product_id,
-        item.quantity,
-        item.unit_price,
-        item.total_price
-      ]);
+    const values = items.map(item => [
+      purchaseId,
+      item.product_id,
+      item.quantity,
+      item.unit_price,
+      item.total_price
+    ]);
 
-      await connection.query(
-        `INSERT INTO purchaseitems (
-          purchase_id, 
-          product_id, 
-          quantity, 
-          unit_price, 
-          total_price
-        ) VALUES ?`,
-        [itemValues]
-      );
-    }
+    await connection.query(
+      `INSERT INTO purchaseitems (purchase_id, product_id, quantity, unit_price, total_price)
+      VALUES ?`,
+      [values]
+    );
 
-    // ยืนยันการบันทึก
     await connection.commit();
 
-    return NextResponse.json({ message: "Success", id: purchaseId });
+    return NextResponse.json({
+      message: "Created successfully",
+      id: purchaseId,
+    });
 
   } catch (error) {
-    // หากเกิดข้อผิดพลาดให้ Rollback
     await connection.rollback();
-    console.error("Database Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
-  } finally {
-    // คืน Connection
-    connection.release();
   }
 }

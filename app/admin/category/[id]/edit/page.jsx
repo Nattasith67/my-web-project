@@ -13,12 +13,6 @@ export default function CategoryEdit() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!id) {
-      setError("ไม่พบ ID หมวดหมู่");
-      setLoading(false);
-      return;
-    }
-
     (async () => {
       try {
         const res = await fetch(`/api/category/${id}`);
@@ -34,6 +28,7 @@ export default function CategoryEdit() {
         setForm({
           name: data.name || ""
         });
+        
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err.message || "ไม่สามารถดึงข้อมูลหมวดหมู่ได้");

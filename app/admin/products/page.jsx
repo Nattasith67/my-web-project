@@ -10,7 +10,6 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  // ดึงข้อมูลสินค้าจาก API
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -26,7 +25,6 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  // ฟิลเตอร์สินค้าตามคำค้นหา
   useEffect(() => {
     if (search.trim() === "") {
       setFilteredProducts(products);
@@ -38,7 +36,6 @@ export default function ProductsPage() {
     }
   }, [search, products]);
 
-  // ฟังก์ชันลบสินค้า
   const handleDelete = async (id) => {
     if (confirm("คุณต้องการลบสินค้านี้ใช่หรือไม่?")) {
       try {
@@ -118,7 +115,6 @@ export default function ProductsPage() {
                 <td>{product.stock_quantity}</td>
                 <td>มีสินค้า</td>
                 <td>
-                  {/* จัดกลุ่มปุ่ม Action */}
                   <div className="actions">
                     <Link href={`/admin/products/${product.id}/edit`} className="btn-edit">
                       <Edit size={16} />

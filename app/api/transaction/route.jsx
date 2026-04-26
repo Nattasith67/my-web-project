@@ -16,7 +16,7 @@ export async function GET() {
         pt.created_at,
         p.po_number,
         u.username
-      FROM transactions pt
+      FROM purchase_transactions pt
       LEFT JOIN purchases p ON pt.purchase_id = p.id
       LEFT JOIN users u ON pt.user_id = u.id
       ORDER BY pt.created_at DESC`

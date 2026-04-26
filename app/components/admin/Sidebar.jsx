@@ -13,9 +13,8 @@ export default function Sidebar() {
   { id: 3, href: '/admin/category', label: 'หมวดหมู่', icon: '📚'},
   { id: 4, href: '/admin/purchase', label: 'Purchase Order', icon: '🛒' },
   { id: 5, href: '/admin/users', label: 'ผู้ใช้', icon: '👥' },
-  { id: 6, href: '/admin/supplier', label: 'supplier', icon: '🚚' },
+  { id: 6, href: '/admin/supplier', label: 'supplier', icon: '👩‍✈️' },
   { id: 7, href: '/admin/transaction', label: 'Transaction', icon: '🚚' },
-  { id: 8, href: '/admin/customers', label: 'ลูกค้า', icon: '👤' }
 ];
 
   return (

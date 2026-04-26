@@ -10,7 +10,6 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
 
-  // ดึงข้อมูลจาก API
   useEffect(() => {
     async function fetchUsers() {
       try {
@@ -27,7 +26,6 @@ export default function UsersPage() {
     fetchUsers();
   }, []);
 
-  // ฟังก์ชันลบ User
   async function handleDelete(id) {
     if (!confirm("คุณต้องการลบผู้ใช้นี้หรือไม่?")) return;
 
@@ -45,7 +43,6 @@ export default function UsersPage() {
     }
   }
 
-  // ระบบค้นหา
   useEffect(() => {
     const filtered = users.filter((u) =>
       u.username?.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -61,7 +58,6 @@ export default function UsersPage() {
         <h1>จัดการผู้ใช้</h1>
       </div>
 
-      {/* จัดกลุ่มปุ่ม Create และ Search bar ให้อยู่บรรทัดเดียวกัน */}
       <div className="top-actions">
         <Link href="/admin/users/create" className="btn-create">
           <Plus size={20} /> เพิ่มผู้ใช้ใหม่
@@ -82,7 +78,6 @@ export default function UsersPage() {
         <table className="user-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Username</th>
               <th>Password</th>
               <th>จัดการ</th>
@@ -92,7 +87,6 @@ export default function UsersPage() {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user.id} className="row">
-                <td>{user.id}</td>
                 <td>{user.username}</td>
                 <td>{user.password}</td>
 

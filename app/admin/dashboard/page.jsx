@@ -4,9 +4,9 @@ import "../../styles/dashboard.css";
 export default function Dashboard() {
   const [stats, setStats] = useState({
     totalProducts: 0,
-    totalOrders: 0,
-    totalUsers: 0,
-    totalRevenue: 0,
+    outOfStock: 0,
+    lowStock: 0,
+    users: 0,
   });
 
   useEffect(() => {
@@ -16,62 +16,40 @@ export default function Dashboard() {
       .then((data) => {
         setStats({
           totalProducts: data.totalProducts || 0,
-          totalOrders: data.totalOrders || 0,
-          totalUsers: data.totalUsers || 0,
-          totalRevenue: data.totalRevenue || 0,
+          outOfStock: data.outOfStock || 0,
+          lowStock: data.lowStock || 0,
+          users: data.users || 0,
+
         });
       })
       .catch((err) => console.error("Error:", err));
   }, []);
 
-  const statCards = [
-    {
-      title: "สินค้าทั้งหมด",
-      value: stats.totalProducts,
-      color: "blue",
-    },
-    {
-      title: "ออเดอร์ทั้งหมด",
-      value: stats.totalOrders,
-      color: "green",
-    },
-    {
-      title: "ผู้ใช้ทั้งหมด",
-      value: stats.totalUsers,
-      color: "purple",
-    },
-    {
-      title: "รายได้ทั้งหมด",
-      value: `฿${stats.totalRevenue.toLocaleString()}`,
-      color: "orange",
-    },
-  ];
+  console.log(stats.outOfStock);
 
   return (
     <div className="dashboard">
       <h1>Dashboard</h1>
 
       <div className="stats-grid">
-        {statCards.map((stat, index) => {
-          return (
-            <div key={index} className={"stats-card"}>
-              <div className="stat-content">
-                <h3>{stat.title}</h3>
-                <p>{stat.value}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="dashboard-content">
-        <div className="recent-orders">
-          <h2>ออเดอร์ล่าสุด</h2>
-          <div className="orders-table">{/* Table content */}</div>
+        <div className="stats-card">
+          <h3>สินค้าทั้งหมด</h3>
+          <p>{stats.totalProducts}</p>
         </div>
-        <div className="top-products">
-          <h2>สินค้าขายดี</h2>
-          <div className="products-list">{/* Products list */}</div>
+
+        <div className="stats-card">
+          <h3>สินค้าใกล้หมด </h3>
+          <p>{stats.lowStock}</p>
+        </div>
+
+        <div className="stats-card">
+          <h3>สินค้าหมดสต๊อก</h3>
+          <p>{stats.outOfStock}</p>
+        </div>
+
+        <div className="stats-card">
+          <h3>พนักงานทั้งหมด</h3>
+          <p>{stats.users}</p>
         </div>
       </div>
     </div>

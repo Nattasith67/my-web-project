@@ -51,7 +51,6 @@
   font-family: inherit;
 }
 
-/* ปุ่มกด */
 .form-button {
   background-color: #0059ff;
   color: white;
@@ -74,7 +73,6 @@
   cursor: not-allowed;
 }
 
-/* แจ้งเตือน Error */
 .error-message {
   background-color: #fee2e2;
   color: #dc2626;
@@ -86,7 +84,6 @@
   border: 1px solid #f87171;
 }
 
-/* ลิงก์กลับไปหน้าก่อนหน้า */
 .cancel-link-container {
   text-align: center;
   margin-top: 24px;
@@ -102,12 +99,4 @@
 .cancel-link:hover {
   color: #111827;
   text-decoration: underline;
-}
-
-/* สำหรับจอมือถือ */
-@media (max-width: 640px) {
-  .form-container {
-    margin: 20px;
-    padding: 24px;
-  }
 }

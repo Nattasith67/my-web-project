@@ -7,17 +7,15 @@ import "../../styles/Category.css";
 export default function CategoryPage() {
   const [category, setCategory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCategory, setFilteredCategory] = useState([]);
+  const [filterCategory, setFilterCategory] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     async function fetchCategory() {
       try {
-        const res = await fetch("/api/category");
+        const res = await fetch(`/api/category`);
         const data = await res.json();
-        
         setCategory(data);
-        setFilteredCategory(data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -26,6 +24,13 @@ export default function CategoryPage() {
     }
     fetchCategory();
   }, []);
+
+  useEffect(() => {
+    const filtered = category.filter((c) =>
+      c.name?.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilterCategory(filtered);
+  }, [search, category]);
 
   async function handleDelete(id) {
     if (!confirm("คุณต้องการลบหมวดหมู่นี้หรือไม่?")) return;
@@ -41,16 +46,6 @@ export default function CategoryPage() {
     }
   }
 
-  // ระบบค้นหา
-  useEffect(() => {
-    if (!Array.isArray(category)) return;
-
-    const filtered = category.filter((c) =>
-      c.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredCategory(filtered);
-  }, [searchTerm, category]);
-
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -59,7 +54,6 @@ export default function CategoryPage() {
         <h1>จัดการหมวดหมู่</h1>
       </div>
 
-      {/* จัดกลุ่มปุ่ม Create และ Search bar ให้อยู่บรรทัดเดียวกันด้วย top-actions */}
       <div className="top-actions">
         <Link href="/admin/category/create" className="btn-create">
           <Plus size={20} /> เพิ่มหมวดหมู่ใหม่
@@ -70,8 +64,8 @@ export default function CategoryPage() {
           <input
             type="text"
             placeholder="ค้นหาหมวดหมู่..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
@@ -85,7 +79,7 @@ export default function CategoryPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredCategory.map((item) => (
+            {filterCategory.map((item) => (
               <tr key={item.id} className="row">
                 <td>{item.name}</td>
                 <td>
@@ -109,7 +103,7 @@ export default function CategoryPage() {
           </tbody>
         </table>
 
-        {filteredCategory.length === 0 && (
+        {category.length === 0 && (
           <div className="no-category">
             <p>ไม่พบหมวดหมู่</p>
           </div>

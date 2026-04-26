@@ -17,6 +17,7 @@ export default function SupplierPage() {
         const data = await res.json();
         setSuppliers(data);
         setFilteredSuppliers(data);
+        setLoading(false)
       } catch (err) {
         console.error("Error fetching suppliers:", err);
       } finally {
@@ -55,7 +56,6 @@ export default function SupplierPage() {
         <h1>จัดการ Supplier</h1>
       </div>
 
-      {/* จัดกลุ่มปุ่มเพิ่มข้อมูล และ ช่องค้นหาให้อยู่ในบรรทัดเดียวกันด้วย flexbox */}
       <div className="top-actions">
         <Link href="/admin/supplier/create" className="btn-create">
           <Plus size={20} /> เพิ่ม Supplier
@@ -76,7 +76,6 @@ export default function SupplierPage() {
         <table className="category-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Phone</th>
               <th>Email</th>
@@ -87,7 +86,6 @@ export default function SupplierPage() {
           <tbody>
             {filteredSuppliers.map((s) => (
               <tr key={s.id} className="row">
-                <td>{s.id}</td>
                 <td>{s.name}</td>
                 <td>{s.phone}</td>
                 <td>{s.email}</td>

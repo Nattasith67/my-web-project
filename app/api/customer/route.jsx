@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/utils/db";
 
-// GET สินค้าทั้งหมด
-
 export async function GET() {
   try {
     const promisePool = pool.promise();
@@ -16,7 +14,6 @@ export async function GET() {
   }
 }
 
-// POST สร้างสินค้าใหม่
 export async function POST(request) {
   try {
     const body = await request.json();

@@ -95,8 +95,10 @@
     box-sizing: border-box;
 }
 
-.sidebar .nav-link:hover {
-    background-color: var(--sidebar-hover);
+.sidebar .nav-link:hover,
+.sidebar .nav-link:visited,
+.sidebar .nav-link:active,
+.sidebar .nav-link:focus {
     color: var(--text-color);
 }
 

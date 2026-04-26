@@ -1,31 +1,43 @@
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+:root {
+  --main-color: #0059ff;
 }
+
+.dashboard {
+  padding: 20px;
+}
+
+.dashboard h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
+
 .stats-card {
-  background-color: #e2e2e2;
-  margin: 1rem 1rem;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--main-color);
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
 .stats-card h3 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 16px;
+  opacity: 0.9;
 }
+
 .stats-card p {
-  font-size: 24px;
-  color: #333;
-}
-.stat-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 10px;
 }

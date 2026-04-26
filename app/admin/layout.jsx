@@ -10,7 +10,6 @@ export default function AdminLayout({ children }) {
     <div className="admin-layout">
       <Sidebar isOpen={sidebarOpen} />
       <div className="admin-main-content">
-        <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         <main className="admin-content">
           {children}
         </main>

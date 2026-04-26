@@ -28,8 +28,22 @@ export async function PATCH(request, { params }) {
       [status, id]
     );
 
+    if (status === "Approved" && oldStatus !== "Approved") {
+      const [purchaseItems] = await connection.query(
+        "SELECT product_id, quantity FROM purchaseitems WHERE purchase_id = ?",
+        [id]
+      );
+
+      for (const item of purchaseItems) {
+        await connection.query(
+          "UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?",
+          [item.quantity, item.product_id]
+        );
+      }
+    }
+
     await connection.query(
-      `INSERT INTO transactions 
+      `INSERT INTO purchase_transactions
       (purchase_id, user_id, action, status_from, status_to, created_at) 
       VALUES (?, ?, ?, ?, ?, NOW())`,
       [
@@ -41,24 +55,20 @@ export async function PATCH(request, { params }) {
       ]
     );
 
-    // ยืนยันการบันทึกทั้งหมด
     await connection.commit();
 
     return NextResponse.json({ message: "อัปเดตสถานะและบันทึก Transaction สำเร็จ" });
 
   } catch (error) {
-    // หากพัง ให้ยกเลิกทั้งหมดที่ทำมา
     await connection.rollback();
     console.error("Update Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
-  } finally {
-    connection.release(); // คืน Connection ให้ Pool
   }
 }
-// (แถม) ฟังก์ชันสำหรับลบข้อมูล (DELETE)
+
 export async function DELETE(request, { params }) {
   try {
-    const { id } = await params;
+    const { id } = params;
     await pool.promise().query("DELETE FROM purchases WHERE id = ?", [id]);
     return NextResponse.json({ message: "ลบสำเร็จ" });
   } catch (error) {

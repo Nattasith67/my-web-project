@@ -17,7 +17,6 @@ export async function GET() {
   }
 }
 
-// POST สร้างหมวดหมู่ใหม่
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -26,9 +25,8 @@ export async function POST(request) {
 
     const [result] = await pool
       .promise()
-      .query("INSERT INTO `user` (username, password) VALUES (?, ?)", [username, password]);
+      .query("INSERT INTO `users` (username, password) VALUES (?, ?)", [username, password]);
 
-    console.log("Insert result:", result); // debug
 
     return NextResponse.json({
       message: "Username and password created successfully",
