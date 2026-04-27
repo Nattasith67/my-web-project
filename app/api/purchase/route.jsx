@@ -21,8 +21,8 @@ export async function GET() {
       `
     );
 
-    return NextResponse.json(rows); 
-    
+    return NextResponse.json(rows);
+
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e.message }, { status: 500 });
@@ -64,8 +64,7 @@ export async function POST(request) {
     ]);
 
     await connection.query(
-      `INSERT INTO purchaseitems (purchase_id, product_id, quantity, unit_price, total_price)
-      VALUES ?`,
+      `INSERT INTO purchaseitems (purchase_id, product_id, quantity, unit_price, total_price) VALUES ?`,
       [values]
     );
 

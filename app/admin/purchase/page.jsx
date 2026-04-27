@@ -16,8 +16,8 @@ export default function PurchasePage() {
         const res = await fetch("/api/purchase");
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-        setPurchases(data || []);
-        setFilteredPurchases(data || []);
+        setPurchases(data);
+        setFilteredPurchases(data);
       } catch (error) {
         console.error("Error fetching purchases:", error);
       } finally {

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import "./../../../styles/AddSupplier.css";
 
 export default function CreateSupplierPage() {
   const router = useRouter();
@@ -11,10 +12,12 @@ export default function CreateSupplierPage() {
     email: "",
     address: ""
   });
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const onChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -41,11 +44,12 @@ export default function CreateSupplierPage() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto" }}>
-      <h1>สร้าง Supplier</h1>
+    <div className="form-container">
+      <h1 className="header">สร้าง Supplier</h1>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+      <form onSubmit={onSubmit} className="custom-form">
         <input
+          className="form-input"
           name="name"
           placeholder="ชื่อ Supplier"
           value={form.name}
@@ -54,6 +58,7 @@ export default function CreateSupplierPage() {
         />
 
         <input
+          className="form-input"
           name="phone"
           placeholder="เบอร์โทร"
           value={form.phone}
@@ -61,6 +66,7 @@ export default function CreateSupplierPage() {
         />
 
         <input
+          className="form-input"
           name="email"
           type="email"
           placeholder="อีเมล"
@@ -69,6 +75,7 @@ export default function CreateSupplierPage() {
         />
 
         <textarea
+          className="form-input"
           name="address"
           placeholder="ที่อยู่"
           rows={3}
@@ -76,16 +83,18 @@ export default function CreateSupplierPage() {
           onChange={onChange}
         />
 
-        <button disabled={saving}>
+        <button className="form-button" disabled={saving}>
           {saving ? "Saving..." : "สร้าง Supplier"}
         </button>
 
-        {error && <div style={{ color: "crimson" }}>{error}</div>}
+        {error && <div className="error-message">{error}</div>}
       </form>
 
-      <p>
-        <Link href="/admin/supplier">กลับไปหน้า Supplier</Link>
-      </p>
+      <div className="cancel-link-container">
+        <Link className="cancel-link" href="/admin/supplier">
+          กลับไปหน้า Supplier
+        </Link>
+      </div>
     </div>
   );
 }

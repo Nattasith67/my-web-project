@@ -25,7 +25,6 @@ export default function Page() {
       const data = await res.json();
 
       if (res.ok) {
-        // Store user info in localStorage (in production, use proper session/cookies)
         localStorage.setItem("user", JSON.stringify(data.user));
         router.push("/admin/dashboard");
       } else {

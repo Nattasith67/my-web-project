@@ -21,7 +21,6 @@ export default function ProductEdit() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // ดึงข้อมูลสินค้า
   useEffect(() => {
     (async () => {
       const res = await fetch(`/api/product/${id}`);
@@ -42,7 +41,6 @@ export default function ProductEdit() {
     })();
   }, [id]);
 
-  // ดึงข้อมูลหมวดหมู่
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/category");
@@ -51,14 +49,12 @@ export default function ProductEdit() {
     })();
   }, []);
 
-  // อัปเดตฟอร์มเมื่อมีการเปลี่ยนแปลง
   const onChange = (e) =>
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
 
-  // บันทึกข้อมูล
   async function onSubmit(e) {
     e.preventDefault();
     setSaving(true);

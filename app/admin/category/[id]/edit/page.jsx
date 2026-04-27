@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import "../../../../styles/EditCategory.css";
 
 export default function CategoryEdit() {
   const { id } = useParams();
   const router = useRouter();
+
   const [form, setForm] = useState({ name: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,21 +17,13 @@ export default function CategoryEdit() {
     (async () => {
       try {
         const res = await fetch(`/api/category/${id}`);
-        console.log("Response status:", res.status);
-        
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
-        
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const data = await res.json();
-        console.log("Category data:", data);
-        
-        setForm({
-          name: data.name || ""
-        });
-        
+
+        setForm({ name: data.name || "" });
       } catch (err) {
-        console.error("Fetch error:", err);
         setError(err.message || "ไม่สามารถดึงข้อมูลหมวดหมู่ได้");
       } finally {
         setLoading(false);
@@ -38,63 +31,62 @@ export default function CategoryEdit() {
     })();
   }, [id]);
 
-  const onChange = (e) => setForm({ 
-    ...form, [e.target.name]: e.target.value
-  });
+  const onChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   async function onSubmit(e) {
     e.preventDefault();
     setSaving(true);
     setError("");
-    
+
     try {
       const res = await fetch(`/api/category/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name
-        })
+        body: JSON.stringify({ name: form.name })
       });
-      
+
       const data = await res.json();
-      console.log("Update response:", data);
-      
-      if (!res.ok) {
-        throw new Error(data?.error || "Update failed");
-      }
-      
+
+      if (!res.ok) throw new Error(data?.error || "Update failed");
+
       alert("อัปเดตหมวดหมู่สำเร็จ!");
       router.push("/admin/category");
     } catch (err) {
-      console.error("Submit error:", err);
       setError(err.message);
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="form-container">Loading...</div>;
 
   return (
-    <div style={{ maxWidth: 640, margin: "24px auto" }}>
-      <h1>แก้ไขหมวดหมู่</h1>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
-        <input 
-          name="name" 
-          placeholder="ชื่อหมวดหมู่" 
-          value={form.name} 
-          onChange={onChange} 
-          required 
+    <div className="form-container">
+      <h1 className="header">แก้ไขหมวดหมู่</h1>
+
+      <form onSubmit={onSubmit} className="custom-form">
+        <input
+          className="form-input"
+          name="name"
+          placeholder="ชื่อหมวดหมู่"
+          value={form.name}
+          onChange={onChange}
+          required
         />
-        <button disabled={saving}>
+
+        <button className="form-button" disabled={saving}>
           {saving ? "Saving..." : "บันทึก"}
         </button>
-        {error && <div style={{ color: "crimson" }}>{error}</div>}
+
+        {error && <div className="error-message">{error}</div>}
       </form>
 
-      <p>
-        <Link href="/admin/category">Cancel</Link>
-      </p>
+      <div className="cancel-link-container">
+        <Link className="cancel-link" href="/admin/category">
+          Cancel
+        </Link>
+      </div>
     </div>
   );
 }

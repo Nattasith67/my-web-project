@@ -143,7 +143,7 @@ export default function CreatePurchaseWithItemsPage() {
       if (!res.ok) throw new Error(data?.error || "Create failed");
 
       alert("สร้างใบสั่งซื้อและรายการสินค้าสำเร็จ!");
-      router.push("/admin/purchases");
+      router.push("/admin/purchase");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -160,7 +160,6 @@ export default function CreatePurchaseWithItemsPage() {
       <div className="form-container wide">
         <form onSubmit={onSubmit} className="custom-form">
           
-          {/* --- ส่วนที่ 1: ข้อมูลหลัก --- */}
           <div className="form-section">
             <h3 className="section-title">ข้อมูลใบสั่งซื้อ</h3>
             <div className="form-grid">
@@ -203,7 +202,6 @@ export default function CreatePurchaseWithItemsPage() {
             </div>
           </div>
 
-          {/* --- ส่วนที่ 2: รายการสินค้า --- */}
           <div className="form-section">
             <h3 className="section-title">รายการสินค้า</h3>
             
@@ -309,7 +307,7 @@ export default function CreatePurchaseWithItemsPage() {
           </div>
           {error && <div className="error-message">{error}</div>}
           <div className="form-actions">
-            <Link href="/admin/purchases" className="btn-cancel">
+            <Link href="/admin/purchase" className="btn-cancel">
               <ArrowLeft size={18} /> ยกเลิก
             </Link>
             
